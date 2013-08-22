@@ -12,8 +12,11 @@ import javax.ws.rs.core.MediaType;
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Key;
 import com.google.code.morphia.Morphia;
+import com.google.code.morphia.query.Query;
 import com.models.*;
 import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.ReadPreference;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -29,45 +32,48 @@ public class MyResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Tarefinha getIt() {
+    public List<Customer> getIt() {
     	
     	try {
-			Mongo mongo = new Mongo("monaco");
+			MongoClient mongo = new MongoClient("monaco");
 			Morphia morphia = new Morphia();
 			Datastore datastore = morphia.createDatastore(mongo, "morphia");
 			
 			morphia
-			.map(Account.class);
+			.map(Customer.class);
 	         
 		     Address address = new Address();
-		     address.setNumber("81");
-		     address.setStreet("Mongo Street");
+		     address.setNumber("1661");
+		     address.setStreet("Av. Imperatriz Leopoldina");
 		     address.setTown("City");
-		     address.setPostcode("CT81 1DB"); 
+		     address.setPostcode("05305007"); 
 		 
 		     Account account = new Account();
-		     account.setName("Personal Account");
+		     account.setName("Conta Empresarial");
 		 
 		     List<Account> accounts = new ArrayList<Account>();
-		     accounts.add(account); 
+		     accounts.add(account);
+		     
+		     String nome = accounts.get(0).getName(); 
 		 
 		     Customer customer = new Customer();
 		     customer.setAddress(address);
-		     customer.setName("Mr Bank Customer");
+		     customer.setName("Mr Ctf Technologies");
 		     customer.setAccounts(accounts);
 		     
-		     Key<Customer> savedCustomer = datastore.save(customer);   
+		     //Key<Customer> savedCustomer = datastore.save(customer);   
+			
+			List<Customer> customers = datastore.createQuery(Customer.class).asList();
+			datastore.getMongo().close();
+
+			return customers;
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
-        Tarefinha tarefinha = new Tarefinha();
-
-        tarefinha.setId(1);
-        tarefinha.setDescricao("Minha primeira tarefinha");
-        return tarefinha;
+      return null;
     	
     }
 }
