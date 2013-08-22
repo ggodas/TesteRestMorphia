@@ -1,10 +1,14 @@
 package com.models;
 
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
  
 @Entity
+@XmlRootElement
 public class Customer extends BaseEntity {
 	  private String name;
 	    private List<Account> accounts;

@@ -2,10 +2,12 @@ package com.example;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -31,16 +33,17 @@ public class MyResource {
      * @return String that will be returned as a text/plain response.
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Customer> getIt() {
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Path("{codPosto}")
+    public List<Abastecimento> getIt(@PathParam("codPosto") String codPosto) {
     	
     	try {
-			MongoClient mongo = new MongoClient("monaco");
+			MongoClient mongo = new MongoClient("128.10.0.112");
 			Morphia morphia = new Morphia();
-			Datastore datastore = morphia.createDatastore(mongo, "morphia");
+			Datastore datastore = morphia.createDatastore(mongo, "Abast");
 			
 			morphia
-			.map(Customer.class);
+			.map(Abastecimento.class);
 	         
 		     Address address = new Address();
 		     address.setNumber("1661");
@@ -62,8 +65,7 @@ public class MyResource {
 		     customer.setAccounts(accounts);
 		     
 		     //Key<Customer> savedCustomer = datastore.save(customer);   
-			
-			List<Customer> customers = datastore.createQuery(Customer.class).asList();
+			List<Abastecimento> customers = datastore.createQuery(Abastecimento.class).field("fabric").equal(codPosto).limit(100).asList();
 			datastore.getMongo().close();
 
 			return customers;
